@@ -8,7 +8,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 const App = () => {
   return(
     <>
-      <Router basename='MediaDownloader-Web'>
+      <Router basename='/MediaDownloader-Web'>
         <HomePage />
     </Router>
     </>
