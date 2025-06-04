@@ -2,18 +2,22 @@ import { Carousel } from "@/ui/carousel";
 import { DisplayCards } from "../display-cards/display-cards";
 import { VideoCards } from "../display-cards/video-cards";
 import SearchSection from "../search-section/search-section";
+import { useState } from "react";
 
 const HomePage = () => {
   const slides = [
-    { content: <DisplayCards key="display" /> },
-    { content: <VideoCards key="video" /> },
+    { content: <DisplayCards key="/photos" /> },
+    { content: <VideoCards key="/videos" /> },
   ];
+
+  const [selectedRoute, setSelectedRoute] = useState(window.location.pathname || slides[0].content.key);
+  
 
   return (
     <>
-      <SearchSection />
+      <SearchSection onRouteSelected={setSelectedRoute}/>
       <div className="mt-5 mb-5 flex justify-center items-center w-full">
-        <Carousel slides={slides} />
+        <Carousel slides={slides} selectedRoute={selectedRoute}/>
       </div>
     </>
   );

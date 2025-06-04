@@ -7,7 +7,11 @@ import ButtonRow from "@/ui/buttons";
 import MiniButtonRow from "@/ui/mini-buttons";
 
 
-const SearchSection = () => {
+type RouteSelectedProp = {
+    onRouteSelected: (route: string) => void;
+}
+
+const SearchSection = ({onRouteSelected}: RouteSelectedProp) => {
 
     const placeholders = [
     "What's the first rule of Fight Club?",
@@ -33,7 +37,8 @@ const button: ButtonRowProps = {
     { label: "Music", path: "/music" },
     { label: "Sound Effects", path: "/soundeffects" },
     { label: "GIFS", path: "/gifs" }
-  ]
+  ],
+  onRouteSelected: onRouteSelected
 };
 
   const miniButtonLabels = [
@@ -53,7 +58,10 @@ const button: ButtonRowProps = {
 
 type ButtonRowProps = {
   buttonLabels: { label: string; path: string }[];
+  onRouteSelected: (route: string) => void;
 };
+
+
 
 
 
@@ -88,7 +96,7 @@ type ButtonRowProps = {
               Ask Aceternity UI Anything
             </h2>
 
-            <ButtonRow buttonLabels={button.buttonLabels}/>
+            <ButtonRow buttonLabels={button.buttonLabels} onRouteSelected={onRouteSelected}/>
 
             <PlaceholdersAndVanishInput
               placeholders={placeholders}
