@@ -1,0 +1,61 @@
+# This workflow will build a React project
+
+name: React CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if React files or workflow file (node.js.yml) changed
+        id: check_changes
+        shell: bash
+        run: |
+          git fetch origin main --depth=1
+          CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
+          echo "$CHANGED_FILES"
+
+          if echo "$CHANGED_FILES" | grep -E '^(DownloaderModule-Web/|\.github/workflows/node\.js\.ya?ml)$'; then
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        if: steps.check_changes.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: DownloaderModule-Web/package-lock.json
+
+      - name: Install dependencies
+        if: steps.check_changes.outputs.run == 'true'
+        run: npm install
+        working-directory: DownloaderModule-Web
+
+      - name: Run React build
+        if: steps.check_changes.outputs.run == 'true'
+        run: npm run build
+        working-directory: DownloaderModule-Web
+
+#      - name: Run React tests
+#        if: steps.check_changes.outputs.run == 'true'
+#        run: npm test -- --watchAll=false
+#       working-directory: DownloaderModule-Web
+
+      - name: Skip React workflow (no relevant changes)
+        if: steps.check_changes.outputs.run == 'false'
+        run: echo "No changes in DownloaderModule-Web or node.js.yml. Skipping React build/test."

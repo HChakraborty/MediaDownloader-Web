@@ -1,0 +1,52 @@
+# This workflow will Lint check a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: CSharpier Format Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-format:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if .NET files or workflow file (format-check.yml) changed
+        id: check_changes
+        shell: bash
+        run: |
+          git fetch origin main --depth=1
+          CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
+          echo "$CHANGED_FILES"
+
+          if echo "$CHANGED_FILES" | grep -E '^(DownloaderModule/.*\.(csproj|sln|props|config|cs)$|\.github/workflows/format-check\.ya?ml)$'; then
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup .NET
+        if: steps.check_changes.outputs.run == 'true'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore .NET tools
+        if: steps.check_changes.outputs.run == 'true'
+        run: dotnet tool restore
+        working-directory: DownloaderModule
+
+      - name: Check formatting using CSharpier
+        if: steps.check_changes.outputs.run == 'true'
+        run: dotnet tool run csharpier check .
+        working-directory: DownloaderModule
+
+      - name: Skip CSharpier check (no relevant changes)
+        if: steps.check_changes.outputs.run == 'false'
+        run: echo "No changes in DownloaderModule or format-check.yml. Skipping format check."
