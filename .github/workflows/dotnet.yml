@@ -1,0 +1,53 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check if .NET files or workflow file (dotnet.yml) changed
+      id: check_changes
+      shell: bash
+      run: |
+        git fetch origin main --depth=1
+        CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
+        echo "$CHANGED_FILES"
+
+        if echo "$CHANGED_FILES" | grep -E '^(DownloaderModule/.*\.(csproj|sln|props|config)|\.github/workflows/dotnet\.ya?ml)$'; then
+          echo "run=true" >> $GITHUB_OUTPUT
+        else
+          echo "run=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Setup .NET
+      if: steps.check_changes.outputs.run == 'true'
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      if: steps.check_changes.outputs.run == 'true'
+      run: dotnet restore DownloaderModule/Downloader.sln
+
+    - name: Build
+      if: steps.check_changes.outputs.run == 'true'
+      run: dotnet build DownloaderModule/Downloader.sln --no-restore
+
+    - name: Test
+      if: steps.check_changes.outputs.run == 'true'
+      run: dotnet test DownloaderModule/Downloader.sln --no-build --verbosity normal
+
+    - name: Skip .NET workflow (no relevant changes detected)
+      if: steps.check_changes.outputs.run == 'false'
+      run: echo "No changes in DownloaderModule or dotnet.yml. Skipping .NET build."
