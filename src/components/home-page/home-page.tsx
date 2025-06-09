@@ -1,26 +1,42 @@
-import { Carousel } from "@/ui/carousel";
-import { DisplayCards } from "../display-cards/display-cards";
-import { VideoCards } from "../display-cards/video-cards";
+import { useEffect, useState } from "react";
+import Carousel from "@/ui/carousel";
 import SearchSection from "../search-section/search-section";
-import { useState } from "react";
+import Footer from "../footer/footer";
+import { Header } from "../header/header";
+import { ErrorBoundary } from "../error/error-handler";
+import { triggerError } from "@/lib/error-trigger";
+
+
+
 
 const HomePage = () => {
-  const slides = [
-    { content: <DisplayCards key="/photos" /> },
-    { content: <VideoCards key="/videos" /> },
-  ];
 
-  const [selectedRoute, setSelectedRoute] = useState(window.location.pathname || slides[0].content.key);
-  
+  const [onSubmitValue, setOnSubmitValue] = useState<string>();
+
+  useEffect(() => {
+triggerError(new Error("First load may be slow due to Netlify free hosting. Please reload — we’ll fix this soon."));
+},[]);
+
+
+  useEffect(() => {
+    if (onSubmitValue) {
+    }
+  }, [onSubmitValue]);
 
   return (
     <>
-      <SearchSection onRouteSelected={setSelectedRoute}/>
-      <div className="mt-5 mb-5 flex justify-center items-center w-full">
-        <Carousel slides={slides} selectedRoute={selectedRoute}/>
-      </div>
+<ErrorBoundary>
+  <Header onSubmit={setOnSubmitValue} />
+  <SearchSection onSubmit={setOnSubmitValue} />
+  <div className="mb-5 flex flex-col items-center justify-center w-full">
+    <Carousel image={onSubmitValue} />
+  </div>
+  <Footer />
+</ErrorBoundary>
     </>
   );
 };
 
 export default HomePage;
+
+

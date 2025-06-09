@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
 import React, { useEffect, useState } from "react";
  
-export const ImagesSlider = ({
+const ImagesSlider = ({
   images,
   children,
   overlay = true,
@@ -134,3 +134,5 @@ const slideVariants = {
     </div>
   );
 };
+
+export  default ImagesSlider

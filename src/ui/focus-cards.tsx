@@ -1,71 +1,118 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import { cn } from "@/lib/utils";
+import { SkeletonCard } from "@/components/display-cards/skeleton-card";
+import { useInView } from "react-intersection-observer";
+import Masonry from "react-masonry-css";
 
-export const CardDisplay = React.memo(
-  ({
-    card,
-    index,
-    hovered,
-    setHovered,
-  }: {
-    card: { src: string; title: string };
-    index: number;
-    hovered: number | null;
-    setHovered: React.Dispatch<React.SetStateAction<number | null>>;
-  }) => (
+type CardData = {
+  title: string;
+  url: string;
+};
+
+export const CardDisplay = ({
+  card,
+  index,
+  hovered,
+  setHovered,
+}: {
+  card: { title: string; url: string };
+  index: number;
+  hovered: number | null;
+  setHovered: React.Dispatch<React.SetStateAction<number | null>>;
+}) => {
+  const [loaded, setLoaded] = useState(false);
+  const [minDelayPassed, setMinDelayPassed] = useState(false);
+  const [visible, setVisible] = useState(true);
+
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setMinDelayPassed(true), 800); // min skeleton duration
+    return () => clearTimeout(timeout);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
     <div
+      ref={ref}
       onMouseEnter={() => setHovered(index)}
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "rounded-lg relative bg-gray-100 dark:bg-neutral-900 overflow-hidden w-full h-fit transition-all duration-300 ease-out",
+        "relative rounded-lg overflow-hidden w-full mx-auto mb-2 p-1 transition-all duration-500 ease-in",
         hovered !== null && hovered !== index && "blur-xs scale-[0.98]"
       )}
     >
-      <img
-        src={card.src}
-        alt={card.title}
-        className="block w-full h-auto object-cover"
-      />
+      {/* Show skeleton if not loaded OR not delayed enough */}
+      {(!loaded || !minDelayPassed) && (
+        <div className="absolute inset-0 z-10">
+          <SkeletonCard />
+        </div>
+      )}
+
+      {inView && (
+        <LazyLoadImage
+          src={card.url}
+          alt={card.title}
+          onLoad={() => setLoaded(true)}
+          onError={(e) => {
+            setVisible(false);
+            e.currentTarget.onerror = null; // prevent infinite loop
+            e.currentTarget.style.display = "none";
+            e.currentTarget.src = "";
+          }}
+          className={cn(
+            "block w-full h-full object-cover transition-all duration-[1000ms] ease-in-out",
+            loaded && minDelayPassed
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-95"
+          )}
+        />
+      )}
+
       <div
         className={cn(
-          "absolute inset-0 bg-black/50 flex items-end py-8 px-4 transition-opacity duration-300",
+          "absolute inset-0 bg-black/10 flex items-end py-8 px-4 transition-opacity duration-300 pointer-events-none",
           hovered === index ? "opacity-100" : "opacity-0"
         )}
-      >
-      </div>
+      />
     </div>
-  )
-);
-
-
-CardDisplay.displayName = "Card";
-
-// FocusCards.tsx
-type CardData = {
-  title: string;
-  src: string;
+  );
 };
 
 export function FocusCards({ cards }: { cards: CardData[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
 
-  return (
-<div className="overflow-x-hidden">
-  <div className="grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-10 w-full">
-    {cards.map((card, index) => (
-      <div key={card.title} className="min-w-0">
-        <CardDisplay
-          card={card}
-          index={index}
-          hovered={hovered}
-          setHovered={setHovered}
-        />
-      </div>
-    ))}
-  </div>
-</div>
+  const breakpointColumnsObj = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1,
+  };
 
+  return (
+    <>
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="flex gap-4"
+        columnClassName="bg-clip-padding"
+      >
+        {cards.map((card, index) => (
+          <CardDisplay
+            key={`image-${index}`}
+            card={card}
+            index={index}
+            hovered={hovered}
+            setHovered={setHovered}
+          />
+        ))}
+      </Masonry>
+    </>
   );
 }

@@ -1,55 +1,52 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { Label } from "./label";
+import { Switch } from "./switch";
 
-
-interface SlideData {
-  content: React.ReactElement,
-}
-
+import React from "react";
+import { useEffect } from "react";
+const PhotoCards = React.lazy(
+  () => import("../components/display-cards/photo-cards")
+);
 
 interface CarouselProps {
-  slides: SlideData[];
-  selectedRoute: string | null
+  image: string | undefined;
 }
 
-export function Carousel({ slides, selectedRoute }: CarouselProps) {
-
-const [routeSelected, setRouteSelected] = useState<string | null>(() => {
-  return selectedRoute ?? window.location.pathname;
-});
-
-const windowMount = useRef(false);
+function Carousel({ image }: CarouselProps) {
+  const [enabled, setEnabled] = React.useState(true);
 
   useEffect(() => {
-    if (windowMount.current) {
-      setRouteSelected(selectedRoute ?? window.location.pathname);
-    } else {
-      windowMount.current = true;
+    if (!image) {
+      return;
     }
-  }, [selectedRoute]);
+  }, [image, enabled]);
 
   return (
-  <div className="relative mx-auto w-[calc(100%-15rem)] px-10 h-[70vmin]">
-
-    <AnimatePresence mode="wait">
-      {slides.map((slide) =>
-        routeSelected === slide.content.key ? (
-          <motion.li
-            key={slide.content.key}
-            className="list-none absolute inset-0"
-            initial={{ x: 300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -300, opacity: 0 }}
-            transition={{ duration: 1 }}
+    <div className="relative mx-auto w-[calc(100%-15vw)] px-10 mt-10">
+      <div>
+        <span className="relative left-0 font-sans font-bold text-base md:text-lg mb-10">
+          Over 4.1 million+ royalty-free stock photos shared by our talented
+          community.
+        </span>
+        <span className="relative flex justify-end space-x-2">
+          <Switch
+            id="show-attribution"
+            checked={enabled}
+            onCheckedChange={setEnabled}
+          />
+          <Label
+            htmlFor="show-attribution"
+            className="text-sm font-medium font-sans md:text-base"
           >
-            {slide.content}
-          </motion.li>
-        ) : null
-      )}
-    </AnimatePresence>
+            Include all creative works (credit required)
+          </Label>
+        </span>
+      </div>
 
+      <PhotoCards value={image} attributionRequired ={enabled}/>
     </div>
   );
 }
+
+export default Carousel;

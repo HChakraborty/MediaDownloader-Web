@@ -4,14 +4,14 @@ import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-export function PlaceholdersAndVanishInput({
+function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
   onSubmit,
 }: {
   placeholders: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit?: (e: string | undefined) => void;
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
@@ -52,7 +52,7 @@ export function PlaceholdersAndVanishInput({
     if (!inputRef.current) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) return;
 
     canvas.width = 800;
@@ -172,7 +172,7 @@ export function PlaceholdersAndVanishInput({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     vanishAndSubmit();
-    onSubmit && onSubmit(e);
+    onSubmit && onSubmit(value);
   };
   return (
     <form
@@ -274,3 +274,5 @@ export function PlaceholdersAndVanishInput({
     </form>
   );
 }
+
+export default PlaceholdersAndVanishInput
