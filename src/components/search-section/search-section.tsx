@@ -6,37 +6,18 @@ import PlaceholdersAndVanishInput from "@/ui/placeholders-and-vanish-input";
 import ButtonRow from "@/ui/buttons";
 import { TextGenerateEffect } from "@/ui/text-generate-effect";
 import { InfiniteMovingButtons } from "@/ui/infinite-moving-buttons";
-import { minButtonLables } from "../../constantsFolder/constants"
-
-import { placeholders } from "../../constantsFolder/constants"
-
+import { minButtonLables } from "../../constants/constants";
+import * as constants from "../../constants/constants";
+import { placeholders } from "../../constants/constants";
 
 type RouteSelectedProp = {
   onSubmit: (e: string | undefined) => void;
 };
 
 const SearchSection = ({ onSubmit }: RouteSelectedProp) => {
+  const images = constants.images;
 
-
-const images = ["/wallpaper1.jpg",
-                "/wallpaper2.jpg",
-                "/wallpaper3.jpg"];
-
-
-  const button: ButtonRowProps = {
-    buttonLabels: [
-    "Sky",
-    "Wallpaper",
-    "Girl",
-    "piersi",
-    "man",
-    "Urban",
-    "Earth",
-    "Tokyo",
-    "Heart",
-    ],
-  };
-
+  const button: ButtonRowProps = constants.button;
 
   type ButtonRowProps = {
     buttonLabels: string[];
@@ -46,14 +27,7 @@ const images = ["/wallpaper1.jpg",
     console.log(e.target.value);
   };
 
-const message: string[] = [
-  "Ask OpenImage Catalogue Anything",
-  "Download High-Quality Images Easily",
-  "Batch Download With One Click",
-  "Edit And Enhance Images With AI",
-  "Simple, Fast, And User-Friendly"
-];
-
+  const message: string[] = constants.message;
 
   return (
     <ImagesSlider
@@ -77,13 +51,14 @@ const message: string[] = [
         <motion.div>
           <div className="h-[40rem] min-w-full flex flex-col justify-center items-center px-4">
             <h2 className="mb-6 text-3xl sm:text-5xl font-bold text-white text-center">
-              <TextGenerateEffect words={message} duration={2} delayBetween={6000}/>
+              <TextGenerateEffect
+                words={message}
+                duration={2}
+                delayBetween={6000}
+              />
             </h2>
 
-            <ButtonRow
-              buttonLabels={button.buttonLabels}
-              onSubmit={onSubmit}
-            />
+            <ButtonRow buttonLabels={button.buttonLabels} onSubmit={onSubmit} />
 
             <PlaceholdersAndVanishInput
               placeholders={placeholders}
@@ -91,7 +66,10 @@ const message: string[] = [
               onSubmit={onSubmit}
             />
 
-            <InfiniteMovingButtons buttonLabels={minButtonLables} onSubmit = {onSubmit}/>
+            <InfiniteMovingButtons
+              buttonLabels={minButtonLables}
+              onSubmit={onSubmit}
+            />
           </div>
         </motion.div>
       </motion.div>

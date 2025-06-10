@@ -1,8 +1,8 @@
 // components/error/error-handler.tsx
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertBox } from "../alertbox/alert-box";
-import { setTrigger, clearTrigger } from "../../error/error-trigger";
+import { AlertBox } from "../components/alertbox/alert-box";
+import { setTrigger, clearTrigger } from "./error-trigger";
 
 type Props = {
   children: React.ReactNode;

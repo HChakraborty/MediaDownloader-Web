@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { SkeletonCard } from "@/components/display-cards/skeleton-card";
 import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
+import * as constant from '../constants/constants';
 
 type CardData = {
   title: string;
@@ -89,12 +90,7 @@ export const CardDisplay = ({
 export function FocusCards({ cards }: { cards: CardData[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
 
-  const breakpointColumnsObj = {
-    default: 4,
-    1100: 3,
-    700: 2,
-    500: 1,
-  };
+  const breakpointColumnsObj = constant.breakpointColumnsObj;
 
   return (
     <>
