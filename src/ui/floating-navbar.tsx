@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import useScrollDirection from "@smakss/react-scroll-direction";
 import PlaceholdersAndVanishInput from "./placeholders-and-vanish-input";
-import { placeholders } from "../constantsFolder/constants";
+import { placeholders } from "../constants/constants";
 
 const FloatingNav = ({
   navItems,

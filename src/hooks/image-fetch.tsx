@@ -1,6 +1,7 @@
 // lib/api/openverse.ts
 
-import { triggerError } from "@/lib/error-trigger";
+import { triggerError } from "@/error/error-trigger";
+import * as constant from '../constants/constants'
 
 export type OpenverseImage = {
   id: string;
@@ -51,7 +52,7 @@ export async function fetchOpenverseImages(
       if (res.status === 429 || res.status === 401) {
         if (attempt < retries) {
           await delay(retryDelay);
-          retryDelay *= 5; // exponential backoff
+          retryDelay *= 5;
           continue;
         }
       }
@@ -62,8 +63,8 @@ export async function fetchOpenverseImages(
     }
   }
   triggerError(
-    new Error("Max retries exceeded while fetching Openverse images.")
+    new Error(constant.maxRetryError)
   );
 
-  throw new Error("Max retries exceeded while fetching Openverse images.");
+  throw new Error(constant.maxRetryError);
 }
