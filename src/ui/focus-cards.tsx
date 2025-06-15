@@ -6,11 +6,13 @@ import { cn } from "@/lib/utils";
 import { SkeletonCard } from "@/components/display-cards/skeleton-card";
 import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
-import * as constant from '../constants/constants';
+import * as constant from "../constants/constants";
 
 type CardData = {
   title: string;
   url: string;
+  thumbnail: string;
+  license: string;
 };
 
 export const CardDisplay = ({
@@ -19,7 +21,7 @@ export const CardDisplay = ({
   hovered,
   setHovered,
 }: {
-  card: { title: string; url: string };
+  card: CardData;
   index: number;
   hovered: number | null;
   setHovered: React.Dispatch<React.SetStateAction<number | null>>;
@@ -47,7 +49,7 @@ export const CardDisplay = ({
       onMouseLeave={() => setHovered(null)}
       className={cn(
         "relative rounded-lg overflow-hidden w-full mx-auto mb-2 p-1 transition-all duration-500 ease-in",
-        hovered !== null && hovered !== index && "blur-xs scale-[0.98]"
+        hovered !== null && hovered !== index && "scale-[0.98]"
       )}
     >
       {/* Show skeleton if not loaded OR not delayed enough */}
@@ -59,7 +61,7 @@ export const CardDisplay = ({
 
       {inView && (
         <LazyLoadImage
-          src={card.url}
+          src={card.thumbnail}
           alt={card.title}
           onLoad={() => setLoaded(true)}
           onError={(e) => {
@@ -71,7 +73,9 @@ export const CardDisplay = ({
           className={cn(
             "block w-full h-full object-cover transition-all duration-[1000ms] ease-in-out",
             loaded && minDelayPassed
-              ? "opacity-100 scale-100"
+              ? hovered === index
+                ? "opacity-100 scale-105" // zoom only if hovered
+                : "opacity-100 scale-100"
               : "opacity-0 scale-95"
           )}
         />

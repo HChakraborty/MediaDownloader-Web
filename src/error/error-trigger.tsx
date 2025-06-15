@@ -1,4 +1,3 @@
-// lib/error-trigger.ts
 let triggerFn: ((err: Error) => void) | null = null;
 
 export function setTrigger(fn: (err: Error) => void) {

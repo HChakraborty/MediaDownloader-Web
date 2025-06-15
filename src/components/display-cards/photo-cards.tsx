@@ -10,6 +10,7 @@ type CardData = {
   title: string;
   url: string;
   license: string;
+  thumbnail: string;
 };
 
 export default function PhotoCards({
@@ -59,6 +60,7 @@ export default function PhotoCards({
           title: img.title,
           url: img.url,
           license: img.license,
+          thumbnail: img.thumbnail
         }));
 
         newImages.push(...mapped);
@@ -92,7 +94,7 @@ export default function PhotoCards({
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <motion.div ref={ref}
         key={`motion-${value}`}
         className="list-none relative inset-0"
         initial={{ x: 300, opacity: 0 }}
@@ -105,7 +107,7 @@ export default function PhotoCards({
         </Suspense>
 
         {hasMore && (
-          <div ref={ref} className="h-10 mt-6 flex items-center justify-center">
+          <div className="h-10 mt-6 flex items-center justify-center">
             <span className="text-sm text-gray-500">Loading more...</span>
           </div>
         )}

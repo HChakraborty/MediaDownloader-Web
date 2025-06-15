@@ -10,7 +10,7 @@ function PlaceholdersAndVanishInput({
   onSubmit,
 }: {
   placeholders: string[];
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit?: (e: string | undefined) => void;
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
