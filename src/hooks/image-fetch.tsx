@@ -36,7 +36,7 @@ export async function fetchOpenverseImages(
   );
   }
   const licenseParam = attributionRequired ? "cc0,by,by-sa" : "cc0";
-
+  
   const url = `https://api.openverse.org/v1/images/?q=${encodeURIComponent(
     query
   )}&page=${page}&page_size=${pageSize}&license=${licenseParam}`;

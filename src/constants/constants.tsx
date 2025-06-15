@@ -1,127 +1,22 @@
-export const minButtonLables = [
-  "Money",
-  "Dragon",
-  "Ghost",
-  "USA",
-  "Poison",
-  "Space",
-  "3D",
-  "Mouse",
-  "Pets",
-  "Mobile",
-  "Computer",
-  "India",
-  "Nature",
-  "Ocean",
-  "Fire",
-  "Love",
-  "Robot",
-  "Night",
-  "Dream",
-  "Music",
-  "Sky",
-  "Stars",
-  "City",
-  "Sun",
-  "Moon",
-  "Art",
-  "Fashion",
-  "Food",
-  "Games",
-  "Speed",
-  "Future",
-  "Light",
-  "Dark",
-  "Tech",
-  "Cloud",
-  "Rain",
-  "Water",
-  "Earth",
-  "Flower",
-  "Bird",
-  "Dog",
-  "Cat",
-  "Fish",
-  "Wolf",
-  "Tiger",
-  "Bear",
-  "Horse",
-  "Snake",
-  "Gold",
-  "Silver",
-  "Bronze",
-  "Warrior",
-  "Sword",
-  "Shield",
-  "Magic",
-  "Alien",
-  "Planet",
-  "Rocket",
-  "Smoke",
-  "Lava",
-  "Crystal",
-  "Virus",
-  "Cyber",
-  "Hacker",
-  "Matrix",
-  "Neon",
-  "Pixel",
-  "Code",
-  "Ninja",
-  "Samurai",
-  "Temple",
-  "Mountain",
-  "Desert",
-  "Forest",
-  "Jungle",
-  "River",
-  "Lake",
-  "Cave",
-  "Train",
-  "Car",
-  "Plane",
-  "Boat",
-  "Bridge",
-  "Tower",
-  "Castle",
-  "Village",
-  "Zombie",
-  "Vampire",
-  "Witch",
-  "Wizard",
-  "Time",
-  "Clock",
-  "Mirror",
-  "Shadow",
-  "Snow",
-  "Ice",
-  "Storm",
-  "Energy",
-  "Vibe",
-  "Noise",
+export const Categories = [
+  "Money", "Love", "Fashion", "Food", "Games", "Speed", "Future",
+ "Nature", "Ocean", "Fire", "Water", "Earth", "Rain", "Flower", "Mountain", "Forest", "Desert", "Snow", "Ice",
+ "Dog", "Cat", "Fish", "Wolf", "Tiger", "Bear", "Horse", "Snake", "Bird", "Pets", "Mouse",
+ "Computer", "Mobile", "Tech", "Cloud", "Cyber", "Code", "Hacker", "Matrix", "Neon", "Pixel",
+  "Dragon", "Ghost", "Robot", "Alien", "Magic", "Sword", "Wizard", "Witch", "Vampire", "Zombie", "Samurai", "Ninja",
+  "Moon", "Sun", "Sky", "Stars", "Planet", "Rocket", "Space",
+  "USA", "India", "City", "Bridge", "Tower", "Castle", "Temple", "Village", "Cave", "Lake", "River",
+  "Car", "Train", "Boat", "Plane",
+  "Time", "Shadow", "Mirror", "Dream", "Light", "Dark", "Energy", "Vibe", "Noise", "Storm", "Smoke", "Lava", "Crystal",
 ];
 
-export const placeholders = ["Dog", "Cycle", "Mountain", "Driving", "Hospital"];
+export const ButtonLabels = Object.values(Categories).flat();
 
-export const images = [
-  "./images/wallpaper1.jpg",
-  "./images/wallpaper2.jpg",
-  "./images/wallpaper3.jpg",
-];
+const imageModules = import.meta.glob("@/assets/images/*.webp", { eager: true });
 
-export const button = {
-  buttonLabels: [
-    "Sky",
-    "Wallpaper",
-    "Girl",
-    "piersi",
-    "man",
-    "Urban",
-    "Earth",
-    "Tokyo",
-    "Heart",
-  ],
-};
+export const images: string[] = Object.values(imageModules).map(
+  (mod: any) => mod.default.toString()
+);
 
 export const message: string[] = [
   "Ask OpenImage Catalogue Anything",
@@ -131,13 +26,17 @@ export const message: string[] = [
   "Simple, Fast, And User-Friendly",
 ];
 
-export const maxRetryError = "Max retries exceeded while fetching Openverse images.";
+export const maxRetryError =
+  "Max retries exceeded while fetching Openverse images.";
 
-export const slowLoadingWarning = "First load may be slow due to Netlify free hosting. Please reload — we’ll fix this soon.";
+export const slowLoadingWarning =
+  "First load may be slow due to Netlify free hosting. Please reload — we’ll fix this soon.";
 
 export const breakpointColumnsObj = {
-    default: 4,
-    1100: 3,
-    700: 2,
-    500: 1,
-  };
+  default: 4,
+  1100: 3,
+  700: 2,
+  500: 1,
+};
+
+export const httpRequestProcessWarning = "Unable to process your request!";

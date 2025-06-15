@@ -1,8 +1,8 @@
-// components/error/error-handler.tsx
-import React from "react";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertBox } from "../components/alertbox/alert-box";
 import { setTrigger, clearTrigger } from "./error-trigger";
+import { Component } from "react";
 
 type Props = {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ type State = {
   message: string;
 };
 
-export class ErrorBoundary extends React.Component<Props, State> {
+export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false, message: "" };
@@ -44,7 +44,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
           <AnimatePresence mode="wait">
             {this.state.hasError && (
               <motion.div
-                key="alertbox"
                 initial={{ x: 300, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 300, opacity: 0 }}
