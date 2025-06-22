@@ -1,6 +1,6 @@
 import { AlertCircleIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../../ui/alert";
-import { ProgressBar } from "./progress-bar";
+import { ProgressBar } from "../progress-bar/progress-bar";
 import { useEffect } from "react";
 
 export function AlertBox({

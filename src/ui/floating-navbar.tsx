@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import useScrollDirection from "@smakss/react-scroll-direction";
 import PlaceholdersAndVanishInput from "./placeholders-and-vanish-input";
-import { placeholders } from "../constantsFolder/constants";
+import * as constants from "../constants/constants";
+import getRandomItems from "@/lib/random-list-generator";
 
 const FloatingNav = ({
   navItems,
@@ -22,6 +23,8 @@ const FloatingNav = ({
   const [visible, setVisible] = useState(false);
 
   const { scrollDir } = useScrollDirection();
+
+  const placeholders = getRandomItems(constants.ButtonLabels, 20);
 
   useEffect(() => {
     if (scrollDir === "down") {

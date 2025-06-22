@@ -1,97 +1,75 @@
 "use client";
 import { motion } from "motion/react";
-import React from "react";
+import { memo } from "react";
 import ImagesSlider from "../../ui/images-slider";
 import PlaceholdersAndVanishInput from "@/ui/placeholders-and-vanish-input";
 import ButtonRow from "@/ui/buttons";
 import { TextGenerateEffect } from "@/ui/text-generate-effect";
 import { InfiniteMovingButtons } from "@/ui/infinite-moving-buttons";
-import { minButtonLables } from "../../constantsFolder/constants"
 
-import { placeholders } from "../../constantsFolder/constants"
+import * as constants from "../../constants/constants";
 
+import getRandomItems from "@/lib/random-list-generator";
+import getRandomSortedItems from "@/lib/random-list-sort";
 
 type RouteSelectedProp = {
   onSubmit: (e: string | undefined) => void;
 };
 
 const SearchSection = ({ onSubmit }: RouteSelectedProp) => {
+  const { images, message, ButtonLabels } = constants;
 
+  const buttonLabels = getRandomItems(ButtonLabels);
 
-const images = ["/wallpaper1.jpg",
-                "/wallpaper2.jpg",
-                "/wallpaper3.jpg"];
+  const miniButtons = getRandomSortedItems(ButtonLabels);
+  const placeholders = getRandomSortedItems(ButtonLabels);
 
-
-  const button: ButtonRowProps = {
-    buttonLabels: [
-    "Sky",
-    "Wallpaper",
-    "Girl",
-    "piersi",
-    "man",
-    "Urban",
-    "Earth",
-    "Tokyo",
-    "Heart",
-    ],
+  const animatation = {
+    initial: {
+      opacity: 0,
+      y: -80,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+    },
+    transition: {
+      duration: 1.5,
+    },
   };
-
-
-  type ButtonRowProps = {
-    buttonLabels: string[];
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-  };
-
-const message: string[] = [
-  "Ask OpenImage Catalogue Anything",
-  "Download High-Quality Images Easily",
-  "Batch Download With One Click",
-  "Edit And Enhance Images With AI",
-  "Simple, Fast, And User-Friendly"
-];
-
 
   return (
     <ImagesSlider
-      className="h-[40rem] transition-all duration-300 ease-in-out"
+      className="min-h-[40rem] transition-all duration-300 ease-in-out"
       images={images}
     >
       <motion.div
-        initial={{
-          opacity: 0,
-          y: -80,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          duration: 1.5,
-        }}
+        initial={animatation.initial}
+        animate={animatation.animate}
+        transition={animatation.transition}
         className="z-50 flex flex-col justify-center items-center"
       >
         <motion.div>
-          <div className="h-[40rem] min-w-full flex flex-col justify-center items-center px-4">
+          <div className="min-h-[40rem] min-w-full flex flex-col justify-center items-center px-4">
             <h2 className="mb-6 text-3xl sm:text-5xl font-bold text-white text-center">
-              <TextGenerateEffect words={message} duration={2} delayBetween={6000}/>
+              <TextGenerateEffect
+                words={message}
+                duration={2}
+                delayBetween={6000}
+              />
             </h2>
 
-            <ButtonRow
-              buttonLabels={button.buttonLabels}
-              onSubmit={onSubmit}
-            />
+            <ButtonRow buttonLabels={buttonLabels} onSubmit={onSubmit} />
 
             <PlaceholdersAndVanishInput
               placeholders={placeholders}
-              onChange={handleChange}
               onSubmit={onSubmit}
             />
 
-            <InfiniteMovingButtons buttonLabels={minButtonLables} onSubmit = {onSubmit}/>
+            <InfiniteMovingButtons
+              buttonLabels={miniButtons}
+              onSubmit={onSubmit}
+            />
           </div>
         </motion.div>
       </motion.div>
@@ -99,4 +77,4 @@ const message: string[] = [
   );
 };
 
-export default SearchSection;
+export default memo(SearchSection);
