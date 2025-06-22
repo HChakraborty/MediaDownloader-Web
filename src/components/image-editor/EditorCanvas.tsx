@@ -49,7 +49,8 @@ const EditorCanvas = ({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [activeEditCard, setActiveEditCard]);
 
-  useOutsideClick(editorRef, () => setActiveEditCard(null));
+useOutsideClick(editorRef as React.RefObject<HTMLDivElement>, () => setActiveEditCard(null));
+
 
   useEffect(() => {
     if (!activeEditCard) return;
@@ -221,7 +222,7 @@ const EditorCanvas = ({
               />
               <SketchPicker
                 color={color}
-                onChange={(c) => setColor(c.hex)}
+                onChange={(c: { hex: React.SetStateAction<string>; }) => setColor(c.hex)}
               />
             </div>
 
