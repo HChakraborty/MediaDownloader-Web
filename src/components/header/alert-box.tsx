@@ -3,16 +3,21 @@ import { Alert, AlertDescription, AlertTitle } from "../../ui/alert";
 import { ProgressBar } from "./progress-bar";
 import { useEffect } from "react";
 
-export function AlertBox({ onClose, message }: { onClose: () => void; message: string | undefined }) {
-  if(!message) return;
-
-    useEffect(() => {
+export function AlertBox({
+  onClose,
+  message,
+}: {
+  onClose: () => void;
+  message: string | undefined;
+}) {
+  useEffect(() => {
+    if (!message) return;
     const timer = setTimeout(() => {
-      onClose()
-    }, 5500)
+      onClose();
+    }, 5500);
 
-    return () => clearTimeout(timer)
-  }, [onClose])
+    return () => clearTimeout(timer);
+  }, [onClose]);
   return (
     <div className="grid w-full max-w-xs items-start gap-4 text-white">
       <Alert
@@ -25,7 +30,9 @@ export function AlertBox({ onClose, message }: { onClose: () => void; message: s
         </div>
 
         <AlertCircleIcon />
-        <AlertTitle className="mt-2">Unable to process your request.</AlertTitle>
+        <AlertTitle className="mt-2">
+          Unable to process your request.
+        </AlertTitle>
         <AlertDescription>
           <ul className="list-inside list-disc text-sm">
             <li>{message || "Invalid Message"}</li>

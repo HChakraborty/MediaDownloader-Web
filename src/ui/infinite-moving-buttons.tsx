@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/tailwindMerge";
 import React, { useEffect, useState } from "react";
 import MiniButtonRow from "./mini-buttons";
 
@@ -14,7 +14,7 @@ export const InfiniteMovingButtons = ({
   className,
 }: {
   buttonLabels: string[];
-  onSubmit: (e: string | undefined) => void;
+  onSubmit: (e: string) => void;
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
   pauseOnHover?: boolean;

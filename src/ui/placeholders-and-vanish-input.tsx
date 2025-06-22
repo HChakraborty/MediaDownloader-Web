@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/tailwindMerge";
 
 function PlaceholdersAndVanishInput({
   placeholders,
@@ -10,8 +10,8 @@ function PlaceholdersAndVanishInput({
   onSubmit,
 }: {
   placeholders: string[];
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSubmit?: (e: string | undefined) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit?: (e: string) => void;
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 

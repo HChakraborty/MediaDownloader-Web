@@ -11,24 +11,46 @@ const PhotoCards = React.lazy(
 
 interface CarouselProps {
   image: string | undefined;
+  extension: string | undefined;
 }
 
-function Carousel({ image }: CarouselProps) {
+function Carousel({ image, extension }: CarouselProps) {
   const [enabled, setEnabled] = React.useState(true);
 
   useEffect(() => {
     if (!image) {
       return;
     }
-  }, [image, enabled]);
+  }, [image, enabled, extension]);
 
   return (
     <div className="relative mx-auto w-[calc(100%-15vw)] px-10 mt-10">
       <div>
-        <span className="relative left-0 font-sans font-bold text-base md:text-lg mb-10">
-          Over 4.1 million+ royalty-free stock photos shared by our talented
-          community.
-        </span>
+        <div className="text-center mt-10 mb-6 px-4">
+          <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight">
+            Royalty-Free{" "}
+            <span className="text-gray-900 dark:text-white font-bold">
+              {image ?? 'Open Source'}
+            </span>{" "}
+            Images in{" "}
+            <span className="text-gray-900 dark:text-white font-bold">
+              {extension ? extension.toUpperCase() : "all"}
+            </span>{" "}
+            Format{(extension === undefined || extension === null || extension === 'all')? "s" : ""}
+          </h2>
+          <p className="mt-4 text-base md:text-lg text-gray-900 font-bold">
+            Discover beautiful royalty-free{" "}
+            <span className="text-gray-900 dark:text-white font-extrabold">
+              {image ?? 'Open Source'}
+            </span>{" "}
+            images in{" "}
+            <span className="text-gray-900 dark:text-white font-extrabold">
+              {extension ? extension.toUpperCase() : "all"}
+            </span>{" "}
+            format — created and shared by our global community.
+          </p>
+        </div>
+
         <span className="relative flex justify-end space-x-2">
           <Switch
             id="show-attribution"
@@ -44,7 +66,11 @@ function Carousel({ image }: CarouselProps) {
         </span>
       </div>
 
-      <PhotoCards value={image} attributionRequired ={enabled}/>
+      <PhotoCards
+        value={image}
+        attributionRequired={enabled}
+        extension={extension}
+      />
     </div>
   );
 }

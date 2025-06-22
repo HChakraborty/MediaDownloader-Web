@@ -5,7 +5,7 @@ const MiniButtonRow = ({
   onSubmit,
 }: {
   miniButtonLabels: string[];
-  onSubmit: (e: string | undefined) => void;
+  onSubmit: (e: string) => void;
 }) => {
   const handleClick = (label: string) => {
     if (label) {
