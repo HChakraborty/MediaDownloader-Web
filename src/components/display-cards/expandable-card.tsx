@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useOutsideClick } from "@/ui/useOutsideClick";
-import { Download, Info, ShoppingCart, X } from "lucide-react";
+import { Download, Info, ShoppingCart, SquarePen, X } from "lucide-react";
 import { AspectRatio } from "@/ui/aspect-ratio";
 import downloadImage from "@/hooks/image-download";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/ui/tooltip";
@@ -22,9 +22,11 @@ type CardData = {
 export function ExpandableImage({
   activeCard,
   setActiveCard,
+  setActiveEditCard,
 }: {
   activeCard: CardData | null;
   setActiveCard: React.Dispatch<React.SetStateAction<CardData | null>>;
+  setActiveEditCard: React.Dispatch<React.SetStateAction<CardData | null>>;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isTouch = useIsTouchDevice();
@@ -149,6 +151,24 @@ export function ExpandableImage({
                   <div className="absolute bottom-3 left-3 z-20">
                     <button className="relative overflow-hidden bg-white/30 backdrop-blur-xs rounded-sm p-2 shadow hover:bg-gray-200">
                       <ShoppingCart className="w-6 h-6 text-black relative z-10" />
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
+                        animate={{ x: ["-100%", "100%"] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      />
+                    </button>
+                  </div>
+
+                  {/* Bottom-center custom icon/button */}
+                  <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-20">
+                    <button
+                      onClick={() => {
+                        setActiveEditCard(activeCard);
+                        setActiveCard(null);
+                      }}
+                      className="relative overflow-hidden bg-white/30 backdrop-blur-xs rounded-sm p-2 shadow hover:bg-gray-200"
+                    >
+                      <SquarePen className="w-6 h-6 text-black relative z-10" />
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
                         animate={{ x: ["-100%", "100%"] }}
