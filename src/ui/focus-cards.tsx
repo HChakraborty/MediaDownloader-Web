@@ -21,6 +21,7 @@ type CardData = {
   license: string;
   attribution: string;
   width: number;
+  height: number;
 };
 
 export const CardDisplay = ({
@@ -96,6 +97,7 @@ export const CardDisplay = ({
               }}
               className={cn(
                 "block w-full h-full object-cover transition-all duration-[1000ms] ease-in-out",
+                (card.width < 200 || card.height < 200) ? "w-[300px] h-[300px]" : "w-full h-full",
                 loaded
                   ? hovered === index
                     ? "opacity-100 scale-105"

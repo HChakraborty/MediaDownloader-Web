@@ -17,6 +17,7 @@ type CardData = {
   attribution: string;
   extension?: string;
   width: number;
+  height: number;
 };
 
 export function ExpandableImage({
@@ -73,7 +74,7 @@ export function ExpandableImage({
 
           <AnimatePresence>
             {activeCard && (
-              <div className="fixed inset-0 grid place-items-center z-50">
+              <div className="fixed inset-0 grid place-items-center z-[6000]">
                 <motion.div
                   ref={ref}
                   className="relative w-screen h-screen sm:w-auto sm:h-auto sm:max-w-[90vw] sm:max-h-[90vh] rounded-2xl overflow-hidden shadow-lg bg-black"

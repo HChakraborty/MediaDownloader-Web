@@ -17,6 +17,7 @@ type CardData = {
   thumbnail: string;
   attribution: string;
   width: number;
+  height: number;
 };
 
 export default function PhotoCards({
@@ -85,7 +86,8 @@ export default function PhotoCards({
           license: img.license,
           thumbnail: img.thumbnail,
           attribution: img.attribution,
-          width: img.width
+          width: img.width,
+          height: img.height
         }));
 
         newImages.push(...mapped);

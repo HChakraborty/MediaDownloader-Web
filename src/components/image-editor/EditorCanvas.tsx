@@ -15,6 +15,7 @@ type CardData = {
   attribution: string;
   extension?: string;
   width: number;
+  height: number;
 };
 
 const EditorCanvas = ({
@@ -197,7 +198,7 @@ const EditorCanvas = ({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-[6000] flex items-center justify-center p-4"
       >
         <div className="relative bg-white rounded-lg p-6 shadow-xl w-full max-w-6xl max-h-[90vh] overflow-auto">
           <button
