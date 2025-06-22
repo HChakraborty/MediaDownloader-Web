@@ -1,7 +1,7 @@
 // lib/api/openverse.ts
 
 import { triggerError } from "@/error/error-trigger";
-import * as constant from '../constants/constants'
+import * as constant from "@/constants/constants";
 
 export type OpenverseImage = {
   id: string;
@@ -27,19 +27,25 @@ export async function fetchOpenverseImages(
   page: number = 1,
   pageSize: number = 20,
   attributionRequired?: boolean,
+  extension?: string,
   retries: number = 3,
-  retryDelay: number = 3000, // initial delay in ms,
+  retryDelay: number = 3000 // initial delay in ms,
 ): Promise<OpenverseResponse> {
-  if(query === "triggerError") {
-      triggerError(
-    new Error("Max retries exceeded while fetching Openverse images.")
-  );
+  if (query === "triggerError") {
+    triggerError(
+      new Error("Max retries exceeded while fetching Openverse images.")
+    );
   }
   const licenseParam = attributionRequired ? "cc0,by,by-sa" : "cc0";
-  
+
+  const defaultExtensions = "png,jpg,jpeg,gif,svg,webp,tiff,bmp";
+
+  const extensionParam =
+    extension && extension !== "all" ? extension : defaultExtensions;
+
   const url = `https://api.openverse.org/v1/images/?q=${encodeURIComponent(
     query
-  )}&page=${page}&page_size=${pageSize}&license=${licenseParam}`;
+  )}&page=${page}&page_size=${pageSize}&license=${licenseParam}&extension=${extensionParam}&mature=false`;
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -62,9 +68,7 @@ export async function fetchOpenverseImages(
       retryDelay *= 2;
     }
   }
-  triggerError(
-    new Error(constant.maxRetryError)
-  );
+  triggerError(new Error(constant.maxRetryError));
 
   throw new Error(constant.maxRetryError);
 }

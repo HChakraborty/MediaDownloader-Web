@@ -62,6 +62,7 @@ export default function PhotoCards({
           : extension;
         const pageSize = value ? PAGE_SIZE : getRandomPageNumber(PAGE_SIZE);
 
+
         const data = await fetchOpenverseImages(
           keyword,
           currentPage.current,
@@ -74,6 +75,7 @@ export default function PhotoCards({
         currentPage.current += 1;
 
         if (results.length === 0) {
+          console.log("⚠ No results on this page.");
           break; // No more results — stop fetching
         }
 

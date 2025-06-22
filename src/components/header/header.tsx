@@ -5,7 +5,7 @@ const FloatingNav = React.lazy(() => import("../../ui/floating-navbar"));
 export function Header({
   onSubmit,
 }: {
-  onSubmit: (e: string) => void;
+  onSubmit: (e: string | undefined) => void;
 }) {
   const navItems = [
     {
