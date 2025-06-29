@@ -1,7 +1,25 @@
-"use client";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/utils/tailwindMerge";
+import cn from "@/utils/tailwindMerge";
+
+const entryExitAnimate = {
+  initial: { opacity: 0, y: 10 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5 },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.5 },
+  },
+};
+
+const blurAnimate = {
+  initial: { opacity: 0, filter: "blur(10px)" },
+  animate: { opacity: 1, filter: "blur(0px)" },
+};
 
 export const TextGenerateEffect = ({
   words,
@@ -31,28 +49,27 @@ export const TextGenerateEffect = ({
           <AnimatePresence mode="wait">
             <motion.div
               key={lines[currentLine]}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.5 }}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={entryExitAnimate}
               className="inline-block"
             >
-              {lines[currentLine]
-                .split(" ")
-                .map((word, idx) => (
-                  <motion.span
-                    key={`${word}-${idx}`}
-                    className="inline-block mr-1"
-                    initial={{ opacity: 0, filter: "blur(10px)" }}
-                    animate={{ opacity: 1, filter: "blur(0px)" }}
-                    transition={{
-                      duration: duration,
-                      delay: idx * 0.1,
-                    }}
-                  >
-                    {word}
-                  </motion.span>
-                ))}
+              {lines[currentLine].split(" ").map((word, idx) => (
+                <motion.span
+                  key={`${word}-${idx}`}
+                  className="inline-block mr-1"
+                  initial="initial"
+                  animate="animate"
+                  variants={blurAnimate}
+                  transition={{
+                    duration: duration,
+                    delay: idx * 0.1,
+                  }}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </motion.div>
           </AnimatePresence>
         </div>

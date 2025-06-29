@@ -1,13 +1,11 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { useOutsideClick } from "@/ui/useOutsideClick";
+import { useOutsideClick } from "@/utils/useOutsideClick";
 import { Download, Info, ShoppingCart, SquarePen, X } from "lucide-react";
 import { AspectRatio } from "@/ui/aspect-ratio";
 import downloadImage from "@/hooks/image-download";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/ui/tooltip";
-import { SkeletonCard } from "@/components/display-cards/skeleton-card";
+import SkeletonCard from "@/components/photo-cards/components/skeleton-card";
 
 type CardData = {
   title: string;
@@ -20,7 +18,7 @@ type CardData = {
   height: number;
 };
 
-export function ExpandableImage({
+function ExpandableImage({
   activeCard,
   setActiveCard,
   setActiveEditCard,
@@ -74,7 +72,7 @@ export function ExpandableImage({
 
           <AnimatePresence>
             {activeCard && (
-              <div className="fixed inset-0 grid place-items-center z-[6000]">
+              <div className="fixed inset-0 grid place-items-center z-[6600]">
                 <motion.div
                   ref={ref}
                   className="relative w-screen h-screen sm:w-auto sm:h-auto sm:max-w-[90vw] sm:max-h-[90vh] rounded-2xl overflow-hidden shadow-lg bg-black"
@@ -140,7 +138,7 @@ export function ExpandableImage({
                         </TooltipTrigger>
                         <TooltipContent
                           side="right"
-                          className="max-w-[250px] whitespace-normal break-words"
+                          className="z-[7000] max-w-[250px] whitespace-normal break-words"
                         >
                           {activeCard.attribution}
                         </TooltipContent>
@@ -203,8 +201,8 @@ export function ExpandableImage({
                     )}
 
                     <motion.img
-                      src={activeCard.url}
-                      alt={activeCard.thumbnail}
+                      src={activeCard.thumbnail}
+                      alt={activeCard.url}
                       className="mx-auto bg-white rounded-lg"
                       style={{
                         maxHeight: "80vh",
@@ -249,3 +247,5 @@ export function useIsTouchDevice() {
 
   return isTouch;
 }
+
+export default ExpandableImage

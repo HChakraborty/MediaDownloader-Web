@@ -1,77 +1,75 @@
-"use client";
-
 import { motion } from "framer-motion";
 import { memo } from "react";
-import ImagesSlider from "@/ui/images-slider";
+import ImagesSlider from "@/components/search-section/components/images-slider";
 import PlaceholdersAndVanishInput from "@/ui/placeholders-and-vanish-input";
-import ExtensionsButtonRow from "@/ui/buttons";
+import ExtensionsButtonRow from "@/components/search-section/components/extensions-button-row";
 import { TextGenerateEffect } from "@/ui/text-generate-effect";
-import { InfiniteMovingButtons } from "@/ui/infinite-moving-buttons";
-import * as constants from "@/constants/constants";
+import { InfiniteMovingButtons } from "@/components/search-section/components/infinite-moving-buttons";
 import getRandomSortedItems from "@/utils/random-list-sort";
-import { HiddenHeader } from "@/components/header/search-header";
+import Header from "@/components/header/header";
+import {
+  categoriesButtonLabel,
+  extensions,
+  messages,
+  searchSectionimages,
+} from "@/constants/constants";
 
-type RouteSelectedProp = {
+type SearchSectionProp = {
   onSubmit: (e: string) => void;
   onSubmitExtension: (e: string) => void;
   activeExtension: string | undefined;
+  setShowLogin: (e: boolean) => void;
+  scrollHeaderVisible: boolean;
+  setScrollHeaderVisible: (e: boolean) => void;
 };
 
-const SearchSection = ({
-  onSubmit,
-  onSubmitExtension,
-  activeExtension,
-}: RouteSelectedProp) => {
-  const { images, message, ButtonLabels, extensions } = constants;
+const animation = {
+  initial: { opacity: 0, y: -80 },
+  animate: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 1.5 } 
+  },
+};
 
-  const miniButtons = getRandomSortedItems(ButtonLabels);
-  const placeholders = getRandomSortedItems(ButtonLabels);
+const miniButtons = getRandomSortedItems(categoriesButtonLabel);
 
-  const animation = {
-    initial: { opacity: 0, y: -80 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 1.5 },
-  };
-
+const SearchSection = (props: SearchSectionProp) => {
   return (
     <ImagesSlider
       className="relative transition-all duration-300 ease-in-out"
-      images={images}
+      images={searchSectionimages}
     >
-      <div className="absolute top-0 left-0 right-0 z-50">
-        <div className="relative z-50 w-full">
-          <HiddenHeader />
-        </div>
+      <div className="absolute top-0 left-0 right-0 z-50 w-full">
+        <Header setShowLogin={props.setShowLogin} scrollHeaderVisible={props.scrollHeaderVisible} setScrollHeaderVisible={props.setScrollHeaderVisible}/>
       </div>
 
       <motion.div
-        initial={animation.initial}
-        animate={animation.animate}
-        transition={animation.transition}
-        className="relative z-40 flex flex-col justify-center items-center min-h-[40rem] w-full px-4"
+        initial="initial"
+        animate="animate"
+        variants={animation}
+        className="relative z-40 flex flex-col justify-center items-center min-h-[60vh] sm:min-h-[40rem] w-full px-4"
       >
         <h2 className="mb-6 text-3xl sm:text-5xl font-bold text-white text-center">
           <TextGenerateEffect
-            words={message}
+            words={messages}
             duration={2}
             delayBetween={6000}
           />
         </h2>
+        <div className="mt-5 mb-5 flex justify-center flex-wrap gap-2">
+          <ExtensionsButtonRow
+            extensions={extensions}
+            onSubmitExtension={props.onSubmitExtension}
+            activeExtension={props.activeExtension}
+          />
+        </div>
 
-        <ExtensionsButtonRow
-          extensions={extensions}
-          onSubmitExtension={onSubmitExtension}
-          activeExtension={activeExtension}
-        />
-
-        <PlaceholdersAndVanishInput
-          placeholders={placeholders}
-          onSubmit={onSubmit}
-        />
+        <PlaceholdersAndVanishInput onSubmit={props.onSubmit} />
 
         <InfiniteMovingButtons
           buttonLabels={miniButtons}
-          onSubmit={onSubmit}
+          onSubmit={props.onSubmit}
         />
       </motion.div>
     </ImagesSlider>

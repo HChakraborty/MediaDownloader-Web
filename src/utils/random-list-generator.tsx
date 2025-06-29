@@ -1,18 +1,13 @@
-import { useMemo } from "react";
+const getRandomItems = <T,>(arr: T[], count = 10): T[] => {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    throw new Error("array must not be empty");
+  }
 
-const randomItemGenerator: <T>(arr: T[], count?: number) => T[] = (
-  arr,
-  count = 10
-) => {
+  const safeCount = Math.min(count, arr.length);
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
+  return shuffled.slice(0, safeCount);
 };
 
-const getRandomItems: <T>(arr: T[], count?: number) => T[] = (
-  arr,
-  count = 10
-) => {
-  return useMemo(() => randomItemGenerator(arr, count), [arr]);
-};
+
 
 export default getRandomItems;

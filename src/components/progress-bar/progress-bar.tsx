@@ -1,5 +1,3 @@
-"use client"
-
 import { Progress } from "../../ui/progress"
 import { useEffect, useRef, useState } from "react"
 

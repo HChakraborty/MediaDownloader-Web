@@ -1,18 +1,28 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Masonry from "react-masonry-css";
-import { cn } from "@/utils/tailwindMerge";
+import cn from "@/utils/tailwindMerge";
 import { useInView } from "react-intersection-observer";
-import { SkeletonCard } from "@/components/display-cards/skeleton-card";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { ExpandableImage } from "@/components/display-cards/expandable-card";
-import * as constant from "../constants/constants";
-import { Maximize, Download, ShoppingCart, Info, SquarePen } from "lucide-react";
+import SkeletonCard from "@/components/photo-cards/components/skeleton-card";
+
+import {
+  Maximize,
+  Download,
+  ShoppingCart,
+  Info,
+  SquarePen,
+} from "lucide-react";
 import downloadImage from "@/hooks/image-download";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/ui/tooltip";
 import { AnimatePresence, motion } from "framer-motion";
-import EditorCanvas from "@/components/image-editor/EditorCanvas";
+import { breakpointColumnsObj } from "@/constants/constants";
+
+const ExpandableImage = React.lazy(
+  () => import("@/components/photo-cards/components/expandable-card")
+);
+const EditorCanvas = React.lazy(
+  () => import("@/components/image-editor/EditorCanvas")
+);
 
 type CardData = {
   title: string;
@@ -73,7 +83,7 @@ export const CardDisplay = ({
           if (isTouchOnlyDevice) setActiveCard(card);
         }}
         className={cn(
-          "relative rounded-lg overflow-hidden w-full mx-auto mb-2 p-1 transition-all duration-500 ease-in",
+          "relative rounded-lg overflow-hidden w-full min-w-[200px] mx-auto mb-2 p-1 transition-all duration-500 ease-in",
           hovered !== null && hovered !== index && "scale-[0.98]"
         )}
       >
@@ -97,7 +107,9 @@ export const CardDisplay = ({
               }}
               className={cn(
                 "block w-full h-full object-cover transition-all duration-[1000ms] ease-in-out",
-                (card.width < 200 || card.height < 200) ? "w-[300px] h-[300px]" : "w-full h-full",
+                card.width < 200 || card.height < 200
+                  ? "w-[300px] h-[300px]"
+                  : "w-full h-full",
                 loaded
                   ? hovered === index
                     ? "opacity-100 scale-105"
@@ -173,7 +185,7 @@ export const CardDisplay = ({
                 {/* Bottom Center */}
                 <div className="absolute z-20 bottom-2 left-1/2 transform -translate-x-1/2">
                   <button
-                    onClick={() =>  setEditActiveCard(card)}
+                    onClick={() => setEditActiveCard(card)}
                     className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
                   >
                     {/* Icon stays fixed */}
@@ -187,7 +199,6 @@ export const CardDisplay = ({
                     />
                   </button>
                 </div>
-
 
                 {/* Bottom Left */}
                 <div className="absolute z-20 bottom-2 left-2">
@@ -222,12 +233,10 @@ export const CardDisplay = ({
   );
 };
 
-export function FocusCards({ cards }: { cards: CardData[] }) {
+function FocusCards({ cards }: { cards: CardData[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [activeCard, setActiveCard] = useState<CardData | null>(null);
   const [activeEditCard, setEditActiveCard] = useState<CardData | null>(null);
-
-  const breakpointColumnsObj = constant.breakpointColumnsObj;
 
   return (
     <>
@@ -250,8 +259,21 @@ export function FocusCards({ cards }: { cards: CardData[] }) {
       </Masonry>
 
       {/* Global Expanded View Modal */}
-      <ExpandableImage activeCard={activeCard} setActiveCard={setActiveCard} setActiveEditCard={setEditActiveCard}/>
-      <EditorCanvas activeEditCard={activeEditCard} setActiveEditCard={setEditActiveCard} />
+      <Suspense fallback={<div>Loading photos...</div>}>
+        <ExpandableImage
+          activeCard={activeCard}
+          setActiveCard={setActiveCard}
+          setActiveEditCard={setEditActiveCard}
+        />
+      </Suspense>
+      <Suspense fallback={<div>Loading photos...</div>}>
+        <EditorCanvas
+          activeEditCard={activeEditCard}
+          setActiveEditCard={setEditActiveCard}
+        />
+      </Suspense>
     </>
   );
 }
+
+export default FocusCards;

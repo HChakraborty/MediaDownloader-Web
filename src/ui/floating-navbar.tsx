@@ -1,18 +1,19 @@
-"use client";
-
 import { useEffect, useState, type JSX } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/utils/tailwindMerge";
+import cn from "@/utils/tailwindMerge";
 import PlaceholdersAndVanishInput from "./placeholders-and-vanish-input";
-import * as constants from "../constants/constants";
-import getRandomItems from "@/utils/random-list-generator";
-import { CardDemo } from "@/pages/authentication/authentication";
-import { X } from "lucide-react";
+
+type AuthenticationProp = {
+  onSubmit: (e: string | undefined) => void;
+  setShowLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  visible: boolean;
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const FloatingNav = ({
   navItems,
   className,
-  onSubmit,
+  props,
 }: {
   navItems: {
     name: string;
@@ -20,12 +21,9 @@ const FloatingNav = ({
     icon?: JSX.Element;
   }[];
   className?: string;
-  onSubmit?: (e: string) => void;
+  props: AuthenticationProp;
 }) => {
   const [visible, setVisible] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-
-  const placeholders = getRandomItems(constants.ButtonLabels, 20);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,10 +39,6 @@ const FloatingNav = ({
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-  };
 
   return (
     <>
@@ -72,52 +66,16 @@ const FloatingNav = ({
                 </a>
               ))}
 
-              <PlaceholdersAndVanishInput
-                placeholders={placeholders}
-                onChange={handleChange}
-                onSubmit={onSubmit}
-              />
+              <PlaceholdersAndVanishInput onSubmit={props.onSubmit} />
 
               <button
                 className="text-sm bg-black text-white px-3 py-1 rounded hover:bg-neutral-800"
-                onClick={() => setShowLogin(true)}
+                onClick={() => props.setShowLogin(true)}
               >
                 Login
               </button>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showLogin && (
-          <>
-            <motion.div
-              className="fixed inset-0 bg-black/60 z-[5100]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-
-            <motion.div
-              className="fixed inset-0 z-[5101] flex items-center justify-center px-4"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="relative bg-transparent max-w-sm w-full">
-                <button
-                  className="absolute -top-4 -right-4 z-10 text-neutral-500 hover:text-neutral-700 bg-white dark:bg-black rounded-full p-1 shadow"
-                  onClick={() => setShowLogin(false)}
-                  aria-label="Close"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-                <CardDemo />
-              </div>
-            </motion.div>
-          </>
         )}
       </AnimatePresence>
     </>

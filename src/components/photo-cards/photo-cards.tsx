@@ -1,14 +1,13 @@
-"use client";
-
 import { fetchOpenverseImages } from "@/hooks/image-fetch";
-import { FocusCards } from "../../ui/focus-cards";
 import { AnimatePresence, motion } from "framer-motion";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { LoaderCircle } from "lucide-react";
-import * as constants from '@/constants/constants';
 import getRandomItem from "@/utils/random-item";
-import getRandomPageNumber from "@/utils/random-number";
+import { categoriesButtonLabel } from "@/constants/constants";
+import React from "react";
+const FocusCards = React.lazy(() => import("@/ui/focus-cards"));
+
 
 type CardData = {
   title: string;
@@ -38,8 +37,6 @@ export default function PhotoCards({
   const currentPage = useRef(1);
   const MAX_IMAGES = 200;
   const PAGE_SIZE = 20;
-  const searchCommonValues = constants.ButtonLabels;
-  const searchCommonExtensions = constants.extensions;
 
   // Reset when value or attributionRequired or extension changes
   useEffect(() => {
@@ -57,17 +54,15 @@ export default function PhotoCards({
 
     while (newImages.length < desiredCount) {
       try {
-        const keyword = value ?? getRandomItem(searchCommonValues);
-        const ext = (extension === undefined || extension === null || extension === 'all')
-          ? getRandomItem(searchCommonExtensions)
+        const query: string = value ?? await getRandomItem(categoriesButtonLabel);
+        const ext: string = (extension === undefined || extension === null || extension === 'all')
+          ? 'all'
           : extension;
-        const pageSize = value ? PAGE_SIZE : getRandomPageNumber(PAGE_SIZE);
 
 
         const data = await fetchOpenverseImages(
-          keyword,
+          query,
           currentPage.current,
-          pageSize,
           attributionRequired,
           ext
         );
@@ -112,6 +107,7 @@ export default function PhotoCards({
     }
 
     setLoading(false);
+    await delay(1000);
   };
 
   // Trigger fetch on inView
@@ -127,10 +123,10 @@ export default function PhotoCards({
         ref={ref}
         key={`motion-${value}-${extension}`}
         className="list-none relative inset-0"
-        initial={{ x: 300, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: -300, opacity: 0 }}
-        transition={{ duration: 2, delay: 0.2 }}
+    initial={{ y: 60, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    exit={{ y: -60, opacity: 0 }}
+    transition={{ duration: 0.8 }}
       >
         <Suspense fallback={<div>Loading photos...</div>}>
           <FocusCards cards={images} />
@@ -156,4 +152,8 @@ export default function PhotoCards({
       </motion.div>
     </AnimatePresence>
   );
+}
+
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -1,5 +1,4 @@
-"use client";
-import { cn } from "@/utils/tailwindMerge";
+import cn from "@/utils/tailwindMerge";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { IconMenu2, IconX } from "@tabler/icons-react";

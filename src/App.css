@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -125,20 +126,20 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
     }
 
-    .animate-fadeIn {
-      animation: fadeIn 0.7s ease-in-out forwards;
+    to {
+      opacity: 1;
     }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.7s ease-in-out forwards;
   }
 
   /* Masonry layout fix for react-masonry-css */
@@ -158,6 +159,10 @@
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
 

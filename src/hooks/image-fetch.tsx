@@ -1,7 +1,5 @@
-// lib/api/openverse.ts
-
+import { maxRetryError } from "@/constants/constants";
 import { triggerError } from "@/error/error-trigger";
-import * as constant from "@/constants/constants";
 
 export type OpenverseImage = {
   id: string;
@@ -22,10 +20,11 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const baseUrl = import.meta.env.VITE_OPENVERSE_API;
+
 export async function fetchOpenverseImages(
   query: string,
   page: number = 1,
-  pageSize: number = 20,
   attributionRequired?: boolean,
   extension?: string,
   retries: number = 3,
@@ -43,8 +42,10 @@ export async function fetchOpenverseImages(
   const extensionParam =
     extension && extension !== "all" ? extension : defaultExtensions;
 
-  const url = `https://api.openverse.org/v1/images/?q=${encodeURIComponent(
-    query
+  const pageSize = 20;
+
+  const url = `${baseUrl}?q=${encodeURIComponent(
+    query.trim()
   )}&page=${page}&page_size=${pageSize}&license=${licenseParam}&extension=${extensionParam}&mature=false`;
 
   for (let attempt = 1; attempt <= retries; attempt++) {
@@ -68,7 +69,7 @@ export async function fetchOpenverseImages(
       retryDelay *= 2;
     }
   }
-  triggerError(new Error(constant.maxRetryError));
+  triggerError(new Error(maxRetryError));
 
-  throw new Error(constant.maxRetryError);
+  throw new Error(maxRetryError);
 }

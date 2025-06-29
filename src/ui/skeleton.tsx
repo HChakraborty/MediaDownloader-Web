@@ -1,4 +1,4 @@
-import { cn } from "@/utils/tailwindMerge"
+import cn from "@/utils/tailwindMerge"
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

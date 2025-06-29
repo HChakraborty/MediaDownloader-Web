@@ -1,4 +1,5 @@
-"use client";
+import { buttonVariants } from "@/constants/constants";
+import Button from "./button";
 
 const MiniButtonRow = ({
   miniButtonLabels,
@@ -14,19 +15,17 @@ const MiniButtonRow = ({
   };
 
   return (
-    <div className="mt-4 flex justify-center flex-wrap">
+    <div className="mt-4 flex justify-center flex-wrap gap-2">
       {miniButtonLabels.map((label, index) => (
-        <button
+        <Button
           key={index}
+          type="button"
+          aria-label="submit"
           onClick={() => handleClick(label)}
-          className={`text-sm font-medium transition-all duration-200 ml-1 mr-1 px-3 py-1.5
-  bg-gray-500 rounded-md shadow text-white
-  hover:text-gray-300 hover:bg-gray-400
-  active:bg-white active:text-black
-`}
+          className={buttonVariants({ variant: "mini", size: "sm", rounded: "md" })}
         >
           {label}
-        </button>
+        </Button>
       ))}
     </div>
   );

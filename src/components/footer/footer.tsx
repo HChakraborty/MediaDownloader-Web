@@ -1,8 +1,6 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/utils/tailwindMerge";
+import cn from "@/utils/tailwindMerge";
 import useScrollDirection from "@smakss/react-scroll-direction";
 
 function FooterContent({ showHaze }: { showHaze: boolean }) {

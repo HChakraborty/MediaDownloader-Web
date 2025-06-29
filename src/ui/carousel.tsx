@@ -1,13 +1,9 @@
-"use client";
-
-import { Label } from "./label";
+import { Label } from "@radix-ui/react-label";
 import { Switch } from "./switch";
 
 import React from "react";
 import { useEffect } from "react";
-const PhotoCards = React.lazy(
-  () => import("../components/display-cards/photo-cards")
-);
+import PhotoCards from "@/components/photo-cards/photo-cards";
 
 interface CarouselProps {
   image: string | undefined;
@@ -30,18 +26,23 @@ function Carousel({ image, extension }: CarouselProps) {
           <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight">
             Royalty-Free{" "}
             <span className="text-gray-900 dark:text-white font-bold">
-              {image ?? 'Open Source'}
+              {image ?? "Open Source"}
             </span>{" "}
             Images in{" "}
             <span className="text-gray-900 dark:text-white font-bold">
               {extension ? extension.toUpperCase() : "all"}
             </span>{" "}
-            Format{(extension === undefined || extension === null || extension === 'all')? "s" : ""}
+            Format
+            {extension === undefined ||
+            extension === null ||
+            extension === "all"
+              ? "s"
+              : ""}
           </h2>
           <p className="mt-4 text-base md:text-lg text-gray-900 font-bold">
             Discover beautiful royalty-free{" "}
             <span className="text-gray-900 dark:text-white font-extrabold">
-              {image ?? 'Open Source'}
+              {image ?? "Open Source"}
             </span>{" "}
             images in{" "}
             <span className="text-gray-900 dark:text-white font-extrabold">
@@ -71,6 +72,7 @@ function Carousel({ image, extension }: CarouselProps) {
         attributionRequired={enabled}
         extension={extension}
       />
+
     </div>
   );
 }
