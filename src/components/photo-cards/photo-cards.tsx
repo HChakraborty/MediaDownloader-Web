@@ -6,8 +6,8 @@ import { LoaderCircle } from "lucide-react";
 import getRandomItem from "@/utils/random-item";
 import { categoriesButtonLabel } from "@/constants/constants";
 import React from "react";
-const FocusCards = React.lazy(() => import("@/ui/focus-cards"));
 
+const FocusCards = React.lazy(() => import("@/ui/focus-cards"));
 
 type CardData = {
   title: string;
@@ -23,10 +23,12 @@ export default function PhotoCards({
   value,
   attributionRequired,
   extension,
+  setDownloadComplete,
 }: {
   value: string | undefined;
   attributionRequired: boolean;
   extension: string | undefined;
+  setDownloadComplete: (e: boolean) => void;
 }) {
   const [images, setImages] = useState<CardData[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -36,9 +38,9 @@ export default function PhotoCards({
 
   const currentPage = useRef(1);
   const MAX_IMAGES = 200;
+  const MAX_PAGES = 10;
   const PAGE_SIZE = 20;
 
-  // Reset when value or attributionRequired or extension changes
   useEffect(() => {
     setImages([]);
     setHasMore(true);
@@ -49,16 +51,26 @@ export default function PhotoCards({
     if (loading || !hasMore) return;
 
     setLoading(true);
-    const desiredCount = PAGE_SIZE;
     const newImages: CardData[] = [];
+    let reachedEnd = false;
 
-    while (newImages.length < desiredCount) {
-      try {
-        const query: string = value ?? await getRandomItem(categoriesButtonLabel);
-        const ext: string = (extension === undefined || extension === null || extension === 'all')
-          ? 'all'
-          : extension;
+    let totalLength = images.length;
 
+    try {
+      while (!reachedEnd) {
+        if (currentPage.current > MAX_PAGES) {
+          console.warn("📛 Max API pages reached.");
+          reachedEnd = true;
+          break;
+        }
+
+        const query = value ?? (await getRandomItem(categoriesButtonLabel));
+        const ext =
+          extension === undefined || extension === null || extension === "all"
+            ? "all"
+            : extension;
+
+        console.log("➡ Fetching page", currentPage.current);
 
         const data = await fetchOpenverseImages(
           query,
@@ -67,12 +79,14 @@ export default function PhotoCards({
           ext
         );
 
-        const results = data?.results ?? [];
         currentPage.current += 1;
 
+        const results = data?.results ?? [];
+
         if (results.length === 0) {
-          console.log("⚠ No results on this page.");
-          break; // No more results — stop fetching
+          console.warn("📭 No results returned from API.");
+          reachedEnd = true;
+          break;
         }
 
         const mapped = results.map((img: any) => ({
@@ -82,35 +96,37 @@ export default function PhotoCards({
           thumbnail: img.thumbnail,
           attribution: img.attribution,
           width: img.width,
-          height: img.height
+          height: img.height,
         }));
 
         newImages.push(...mapped);
+        totalLength += mapped.length;
 
-        if (images.length + newImages.length >= MAX_IMAGES) {
-          break; // We've reached our max
+        if (results.length < PAGE_SIZE || totalLength >= MAX_IMAGES) {
+          reachedEnd = true;
+          break;
         }
-
-      } catch (err) {
-        console.error("❌ Failed to fetch images:", err);
-        break;
       }
-    }
 
-    setImages(prev => [...prev, ...newImages]);
+      setImages((prev) => [...prev, ...newImages]);
 
-    if (
-      newImages.length === 0 || // No new images this round
-      images.length + newImages.length >= MAX_IMAGES
-    ) {
+      if (
+        totalLength >= MAX_IMAGES ||
+        reachedEnd ||
+        currentPage.current > MAX_PAGES
+      ) {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("❌ Failed to fetch images:", err);
       setHasMore(false);
     }
 
     setLoading(false);
     await delay(1000);
+    setDownloadComplete(true);
   };
 
-  // Trigger fetch on inView
   useEffect(() => {
     if (inView && hasMore && !loading) {
       fetchImages();
@@ -119,17 +135,21 @@ export default function PhotoCards({
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <div
         ref={ref}
         key={`motion-${value}-${extension}`}
         className="list-none relative inset-0"
-    initial={{ y: 60, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    exit={{ y: -60, opacity: 0 }}
-    transition={{ duration: 0.8 }}
       >
-        <Suspense fallback={<div>Loading photos...</div>}>
-          <FocusCards cards={images} />
+        <Suspense fallback={null}>
+          <motion.div
+            key={`focus-cards-${value}-${extension}`}
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -60 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+          >
+            <FocusCards cards={images} />
+          </motion.div>
         </Suspense>
 
         {hasMore && (
@@ -138,7 +158,7 @@ export default function PhotoCards({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
             className="h-10 mt-6 flex items-center justify-center"
           >
             <motion.div
@@ -149,11 +169,11 @@ export default function PhotoCards({
             </motion.div>
           </motion.div>
         )}
-      </motion.div>
+      </div>
     </AnimatePresence>
   );
 }
 
 function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

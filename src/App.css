@@ -142,20 +142,6 @@
     animation: fadeIn 0.7s ease-in-out forwards;
   }
 
-  /* Masonry layout fix for react-masonry-css */
-  .my-masonry-grid {
-    display: flex;
-    margin-left: -1rem;
-    /* gutter size offset */
-    width: auto;
-  }
-
-  .my-masonry-grid_column {
-    padding-left: 1rem;
-    /* gutter size */
-    background-clip: padding-box;
-  }
-
 
   body {
     @apply bg-background text-foreground;
@@ -164,6 +150,28 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+
+  @media (hover: none) and (pointer: coarse) {
+    .disable-hover *:hover {
+      all: unset !important;
+    }
+  }
+
+  /* global.css or inside a style block */
+/* Masonry container */
+.my-masonry-grid {
+  display: flex;
+  margin-left: -1rem; /* gutter size offset */
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 1rem; /* gutter size */
+  background-clip: padding-box;
+}
+
+
 
 
 }

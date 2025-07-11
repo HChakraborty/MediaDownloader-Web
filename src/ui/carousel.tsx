@@ -8,9 +8,16 @@ import PhotoCards from "@/components/photo-cards/photo-cards";
 interface CarouselProps {
   image: string | undefined;
   extension: string | undefined;
+  downloadComplete: boolean;
+  setDownloadComplete: (e: boolean) => void;
 }
 
-function Carousel({ image, extension }: CarouselProps) {
+function Carousel({
+  image,
+  extension,
+  setDownloadComplete,
+  downloadComplete,
+}: CarouselProps) {
   const [enabled, setEnabled] = React.useState(true);
 
   useEffect(() => {
@@ -20,10 +27,10 @@ function Carousel({ image, extension }: CarouselProps) {
   }, [image, enabled, extension]);
 
   return (
-    <div className="relative mx-auto w-[calc(100%-15vw)] px-10 mt-10">
+    <div className="relative mx-auto w-[calc(100%-15vw)] px-10 sm:mt-10 bg-zinc-100 dark:bg-zinc-900">
       <div>
         <div className="text-center mt-10 mb-6 px-4">
-          <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight">
+          <h2 className="md:text-4xl sm:text-lg text-sm font-semibold text-gray-900 tracking-tight">
             Royalty-Free{" "}
             <span className="text-gray-900 dark:text-white font-bold">
               {image ?? "Open Source"}
@@ -39,7 +46,8 @@ function Carousel({ image, extension }: CarouselProps) {
               ? "s"
               : ""}
           </h2>
-          <p className="mt-4 text-base md:text-lg text-gray-900 font-bold">
+
+          <p className="mt-4 text-sm md:text-lg text-gray-900 font-bold hidden sm:block">
             Discover beautiful royalty-free{" "}
             <span className="text-gray-900 dark:text-white font-extrabold">
               {image ?? "Open Source"}
@@ -57,6 +65,8 @@ function Carousel({ image, extension }: CarouselProps) {
             id="show-attribution"
             checked={enabled}
             onCheckedChange={setEnabled}
+            onClick={() => setDownloadComplete(false)}
+            disabled={!downloadComplete}
           />
           <Label
             htmlFor="show-attribution"
@@ -71,8 +81,8 @@ function Carousel({ image, extension }: CarouselProps) {
         value={image}
         attributionRequired={enabled}
         extension={extension}
+        setDownloadComplete={setDownloadComplete}
       />
-
     </div>
   );
 }

@@ -1,16 +1,22 @@
 import { buttonVariants } from "@/constants/constants";
 import Button from "./button";
+import cn from "@/utils/tailwindMerge";
 
 const MiniButtonRow = ({
   miniButtonLabels,
   onSubmit,
+  downloadComplete,
+  setDownloadComplete
 }: {
   miniButtonLabels: string[];
   onSubmit: (e: string) => void;
+  downloadComplete: boolean;
+  setDownloadComplete: (e: boolean) => void;
 }) => {
   const handleClick = (label: string) => {
     if (label) {
       onSubmit(label);
+      setDownloadComplete(false);
     }
   };
 
@@ -21,8 +27,9 @@ const MiniButtonRow = ({
           key={index}
           type="button"
           aria-label="submit"
+          disabled={!downloadComplete}
           onClick={() => handleClick(label)}
-          className={buttonVariants({ variant: "mini", size: "sm", rounded: "md" })}
+          className={cn(buttonVariants({ variant: "mini", size: "sm", rounded: "md" }))}
         >
           {label}
         </Button>

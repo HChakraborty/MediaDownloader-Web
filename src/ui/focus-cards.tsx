@@ -2,9 +2,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Masonry from "react-masonry-css";
 import cn from "@/utils/tailwindMerge";
 import { useInView } from "react-intersection-observer";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import SkeletonCard from "@/components/photo-cards/components/skeleton-card";
-
 import {
   Maximize,
   Download,
@@ -17,11 +15,11 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/ui/tooltip";
 import { AnimatePresence, motion } from "framer-motion";
 import { breakpointColumnsObj } from "@/constants/constants";
 
-const ExpandableImage = React.lazy(
-  () => import("@/components/photo-cards/components/expandable-card")
+const ExpandableImage = React.lazy(() =>
+  import("@/components/photo-cards/components/expandable-card")
 );
-const EditorCanvas = React.lazy(
-  () => import("@/components/image-editor/EditorCanvas")
+const EditorCanvas = React.lazy(() =>
+  import("@/components/image-editor/editor-canvas")
 );
 
 type CardData = {
@@ -33,6 +31,8 @@ type CardData = {
   width: number;
   height: number;
 };
+
+const randomHeights = ["h-[300px]", "h-[400px]", "h-[500px]", "h-[600px]"];
 
 export const CardDisplay = ({
   card,
@@ -50,20 +50,22 @@ export const CardDisplay = ({
   setEditActiveCard: React.Dispatch<React.SetStateAction<CardData | null>>;
 }) => {
   const [loaded, setLoaded] = useState(false);
-
   const [visible, setVisible] = useState(true);
   const [isTouchOnlyDevice, setIsTouchOnlyDevice] = useState(false);
 
   const { ref, inView } = useInView({
     triggerOnce: true,
-    threshold: 0.1,
+    rootMargin: "1000px",
   });
+
+  const fixedHeight = randomHeights[index % randomHeights.length];
 
   useEffect(() => {
     const checkTouchOnly = () => {
-      const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-      const noHover = !window.matchMedia("(hover: hover)").matches;
-      setIsTouchOnlyDevice(isTouch && noHover);
+      const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      const hoverMedia = window.matchMedia("(hover: hover)").matches;
+      const isLikelyMobile = window.innerWidth < 768;
+      setIsTouchOnlyDevice((hasTouch && !hoverMedia) || isLikelyMobile);
     };
 
     checkTouchOnly();
@@ -83,151 +85,121 @@ export const CardDisplay = ({
           if (isTouchOnlyDevice) setActiveCard(card);
         }}
         className={cn(
-          "relative rounded-lg overflow-hidden w-full min-w-[200px] mx-auto mb-2 p-1 transition-all duration-500 ease-in",
+          "relative rounded-lg overflow-hidden w-full max-w-full mx-auto mb-2 p-1 transition-all duration-500 ease-in",
+          isTouchOnlyDevice && "disable-hover",
           hovered !== null && hovered !== index && "scale-[0.98]"
         )}
       >
-        {!loaded && (
-          <div className="absolute inset-0 z-10">
-            <SkeletonCard />
-          </div>
-        )}
+        <div className={cn("relative w-full", fixedHeight)}>
+          {/* Always render skeleton as background */}
+          <SkeletonCard height={fixedHeight} />
 
-        {inView && (
-          <>
-            <LazyLoadImage
+          {/* Image motion overlay on top of skeleton */}
+          {inView && (
+            <motion.img
               src={card.thumbnail}
-              alt={card.url}
+              alt={card.title}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={loaded ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
               onLoad={() => setLoaded(true)}
               onError={(e) => {
                 setVisible(false);
                 e.currentTarget.onerror = null;
-                e.currentTarget.style.display = "none";
-                e.currentTarget.src = "";
               }}
               className={cn(
-                "block w-full h-full object-cover transition-all duration-[1000ms] ease-in-out",
-                card.width < 200 || card.height < 200
-                  ? "w-[300px] h-[300px]"
-                  : "w-full h-full",
-                loaded
-                  ? hovered === index
-                    ? "opacity-100 scale-105"
-                    : "opacity-100 scale-100"
-                  : "opacity-0 scale-95"
+                "absolute inset-0 w-full h-full object-cover rounded-xl"
               )}
+              loading="lazy"
             />
+          )}
+        </div>
 
-            {!isTouchOnlyDevice && hovered === index && (
-              <>
-                {/* Top overlay */}
-                <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/50 to-transparent z-10 pointer-events-none" />
+        {/* Overlays shown only when loaded and hovered */}
+        {loaded && !isTouchOnlyDevice && hovered === index && (
+          <>
+            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
 
-                {/* Bottom overlay */}
-                <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
-
-                {/* Top Left */}
-                {/* Top Left */}
-                <div className="absolute z-20 top-2 left-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-full bg-white/30 backdrop-blur-xs">
-                        <Info className="w-6 h-6 text-black relative z-10" />
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
-                          animate={{ x: ["-100%", "100%"] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      className="max-w-[250px] whitespace-normal break-words"
-                    >
-                      {card.attribution}
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-
-                {/* Top Right */}
-                <div className="absolute z-20 top-2 right-2">
-                  <button className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs">
-                    {/* Icon stays fixed */}
-                    <ShoppingCart className="w-6 h-6 text-black relative z-10" />
-
-                    {/* Shimmer under icon */}
+            <div className="absolute z-20 top-2 left-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-full bg-white/30 backdrop-blur-xs">
+                    <Info className="w-6 h-6 text-black relative z-10" />
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
                       animate={{ x: ["-100%", "100%"] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
                     />
                   </button>
-                </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-[250px] whitespace-normal break-words"
+                >
+                  {card.attribution}
+                </TooltipContent>
+              </Tooltip>
+            </div>
 
-                {/* Bottom Right */}
-                <div className="absolute z-20 bottom-2 right-2">
-                  <button
-                    onClick={() => setActiveCard(card)}
-                    className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
-                  >
-                    {/* Icon stays fixed */}
-                    <Maximize className="w-6 h-6 text-black relative z-10" />
+            <div className="absolute z-20 top-2 right-2">
+              <button
+                disabled
+                className="relative overflow-hidden transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
+              >
+                <ShoppingCart className="w-6 h-6 text-black relative z-10" />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              </button>
+            </div>
 
-                    {/* Shimmer under icon */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
-                  </button>
-                </div>
+            <div className="absolute z-20 bottom-2 right-2">
+              <button
+                onClick={() => setActiveCard(card)}
+                className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
+              >
+                <Maximize className="w-6 h-6 text-black relative z-10" />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              </button>
+            </div>
 
-                {/* Bottom Center */}
-                <div className="absolute z-20 bottom-2 left-1/2 transform -translate-x-1/2">
-                  <button
-                    onClick={() => setEditActiveCard(card)}
-                    className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
-                  >
-                    {/* Icon stays fixed */}
-                    <SquarePen className="w-6 h-6 text-black relative z-10" />
+            <div className="absolute z-20 bottom-2 left-1/2 transform -translate-x-1/2">
+              <button
+                disabled
+                onClick={() => setEditActiveCard(card)}
+                className="relative overflow-hidden transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
+              >
+                <SquarePen className="w-6 h-6 text-black relative z-10" />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              </button>
+            </div>
 
-                    {/* Shimmer under icon */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
-                  </button>
-                </div>
-
-                {/* Bottom Left */}
-                <div className="absolute z-20 bottom-2 left-2">
-                  <button
-                    onClick={() => downloadImage(card.url, card.title)}
-                    className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
-                  >
-                    {/* Icon stays fixed */}
-                    <Download className="w-6 h-6 text-black relative z-10" />
-
-                    {/* Shimmer under icon */}
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
-                      animate={{ x: ["-100%", "100%"] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
-                  </button>
-                </div>
-              </>
-            )}
+            <div className="absolute z-20 bottom-2 left-2">
+              <button
+                onClick={() => downloadImage(card.url, card.title)}
+                className="relative overflow-hidden transition cursor-pointer shadow hover:bg-gray-200 p-1 rounded-sm bg-white/30 backdrop-blur-xs"
+              >
+                <Download className="w-6 h-6 text-black relative z-10" />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent z-0 pointer-events-none"
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              </button>
+            </div>
           </>
         )}
-
-        <div
-          className={cn(
-            "absolute inset-0 bg-black/10 flex items-end py-8 px-4 transition-opacity duration-300 pointer-events-none",
-            hovered === index ? "opacity-100" : "opacity-0"
-          )}
-        />
       </div>
     </AnimatePresence>
   );
@@ -239,11 +211,11 @@ function FocusCards({ cards }: { cards: CardData[] }) {
   const [activeEditCard, setEditActiveCard] = useState<CardData | null>(null);
 
   return (
-    <>
+    <div className="w-full max-w-[1440px] mx-auto px-4">
       <Masonry
         breakpointCols={breakpointColumnsObj}
-        className="flex gap-4"
-        columnClassName="bg-clip-padding"
+        className="my-masonry-grid w-full max-w-full overflow-hidden"
+        columnClassName="my-masonry-grid_column"
       >
         {cards.map((card, index) => (
           <CardDisplay
@@ -258,21 +230,21 @@ function FocusCards({ cards }: { cards: CardData[] }) {
         ))}
       </Masonry>
 
-      {/* Global Expanded View Modal */}
-      <Suspense fallback={<div>Loading photos...</div>}>
+      <Suspense fallback={null}>
         <ExpandableImage
           activeCard={activeCard}
           setActiveCard={setActiveCard}
           setActiveEditCard={setEditActiveCard}
         />
       </Suspense>
-      <Suspense fallback={<div>Loading photos...</div>}>
+
+      <Suspense fallback={null}>
         <EditorCanvas
           activeEditCard={activeEditCard}
           setActiveEditCard={setEditActiveCard}
         />
       </Suspense>
-    </>
+    </div>
   );
 }
 

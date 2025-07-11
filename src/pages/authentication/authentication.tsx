@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
 import AuthenticationCard from "./authentication-card";
 import { FocusTrap } from "focus-trap-react";
 import { useEffect } from "react";
@@ -76,14 +75,7 @@ const Authentication = (props: AuthenticationProp) => {
           >
             <FocusTrap>
               <div className="relative max-w-sm w-full border-none bg-transparent p-4 sm:p-6">
-                <button
-                  className="absolute top-2 right-2 sm:-top-4 sm:-right-4 z-10 text-neutral-500 hover:text-neutral-700 bg-white dark:bg-black rounded-full p-1 shadow"
-                  onClick={() => props.setShowLogin(false)}
-                  aria-label="Close"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-                <AuthenticationCard />
+                <AuthenticationCard setShowLogin={props.setShowLogin}/>
               </div>
             </FocusTrap>
           </motion.div>

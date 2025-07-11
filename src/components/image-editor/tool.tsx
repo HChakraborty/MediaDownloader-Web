@@ -1,11 +1,28 @@
-function Tool({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
+function Tool({
+  icon,
+  label,
+  onClick,
+  active,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  active?: boolean;
+}) {
   return (
     <button
-      onClick={onClick}
-      className="flex items-center gap-2 p-2 rounded hover:bg-neutral-300 transition text-sm"
+      onClick={label.trim().toLowerCase() !== "crop" ? undefined : onClick}
+      disabled={label.trim().toLowerCase() !== "crop"}
+      className={`flex flex-col items-center justify-center px-3 text-xs transition ${
+        active ? "text-blue-600" : "text-gray-800"
+      } ${
+        label.trim().toLowerCase() !== "crop"
+          ? "opacity-50 cursor-not-allowed"
+          : "hover:text-blue-600"
+      }`}
     >
-      {icon}
-      <span className="whitespace-pre">{label}</span>
+      <div className="text-2xl">{icon}</div>
+      <span className="mt-1 uppercase tracking-wider">{label}</span>
     </button>
   );
 }

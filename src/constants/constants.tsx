@@ -1,4 +1,3 @@
-import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
 import bridge from "@/assets/images/bridge.avif";
 import deer from "@/assets/images/deer.avif";
 import forest from "@/assets/images/forest.avif";
@@ -111,13 +110,13 @@ export const maxRetryError: string =
 export const slowLoadingWarning: string =
   "First load may be slow due to Netlify free hosting. Please reload — we’ll fix this soon.";
 
-export const breakpointColumnsObj: Record<number, number> & {
-  default: number;
-} = {
+export const breakpointColumnsObj: Record<number, number> & { default: number } = {
   default: 4,
-  1100: 3,
-  700: 2,
-  500: 1,
+  1536: 4,
+  1280: 3,
+  1024: 3,
+  768: 2,
+  640: 1,
 };
 
 export const httpRequestProcessWarning: string =
@@ -133,24 +132,6 @@ export const extensions: string[] = [
   "webp",
   "tiff",
   "bmp",
-];
-
-export const navItems = [
-  {
-    name: "Home",
-    link: "/",
-    icon: <IconHome className="h-4 w-4 text-neutral-500 dark:text-white" />,
-  },
-  {
-    name: "About",
-    link: "/about",
-    icon: <IconUser className="h-4 w-4 text-neutral-500 dark:text-white" />,
-  },
-  {
-    name: "Contact",
-    link: "/contact",
-    icon: <IconMessage className="h-4 w-4 text-neutral-500 dark:text-white" />,
-  },
 ];
 
 export const buttonLabels = {
@@ -173,7 +154,7 @@ export const googleLogin = "Login with Google";
 
 export const buttonVariants = cva(
   // Base classes shared across all variants
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all shadow-xs outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:border-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all shadow-xs outline-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:border-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
@@ -192,7 +173,7 @@ export const buttonVariants = cva(
         extension:
           "text-md px-4 py-2 bg-transparent hover:bg-gray-200 hover:text-black active:bg-gray-500 active:shadow active:text-white focus-visible:outline-2 focus-visible:outline-ring",
         arrow:
-          "relative overflow-hidden transition cursor-pointer shadow-lg hover:bg-gray-300/60 p-2 rounded-full bg-white/60 backdrop-blur-sm border border-black/10 dark:border-white/20",
+          "relative overflow-hidden transition cursor-pointer shadow-lg hover:bg-gray-400/60 p-2 rounded-full bg-gray-400 backdrop-blur-sm border border-black/10 dark:border-white/20",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -216,4 +197,4 @@ export const buttonVariants = cva(
   }
 );
 
-export const textPlaceholder = "Search for Images";
+export const textPlaceholder = "Search Images";

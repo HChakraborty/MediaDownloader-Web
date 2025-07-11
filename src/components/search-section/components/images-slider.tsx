@@ -62,7 +62,7 @@ const ImagesSlider = ({
   return (
     <div
       className={cn(
-        "overflow-hidden w-full relative flex items-center justify-center perspective-[1000px] min-h-[40rem]",
+        "overflow-hidden w-full relative flex items-center justify-center perspective-[1000px] h-[27rem] sm:h-[28rem] md:h-[32rem] lg:h-[36rem]",
         className
       )}
     >

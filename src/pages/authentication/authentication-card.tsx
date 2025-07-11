@@ -1,7 +1,6 @@
 import Button from "@/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -21,16 +20,38 @@ import {
   password,
   signUp,
 } from "@/constants/constants";
+import { X } from "lucide-react";
 
-const AuthenticationCard = () => {
+type AuthenticationProp = {
+  setShowLogin: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const AuthenticationCard = (props: AuthenticationProp) => {
   return (
-    <Card className="w-full max-w-sm bg-zinc-100 border border-zinc-200 shadow-lg">
-      <CardHeader>
+    <Card className="w-full max-w-sm bg-zinc-100 border border-zinc-200 shadow-lg relative">
+      <CardHeader className="relative">
+        {/* Close + Sign Up in top-right corner */}
+        <div className="absolute top-0 right-0 flex items-center gap-2">
+          <a
+            href="#"
+            className="text-sm underline-offset-4 hover:underline whitespace-nowrap"
+          >
+            {signUp}
+          </a>
+          <div className="-mt-3 sm:-mt-2 mr-2">
+            <button
+              className="text-neutral-500 hover:text-neutral-700 bg-white dark:bg-black rounded-full p-2 shadow"
+              onClick={() => props.setShowLogin(false)}
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Title & Description */}
         <CardTitle>{loginTitle}</CardTitle>
         <CardDescription>{emailDescription}</CardDescription>
-        <CardAction>
-          <Button variant="link">{signUp}</Button>
-        </CardAction>
       </CardHeader>
 
       <CardContent>

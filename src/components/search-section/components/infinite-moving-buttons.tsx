@@ -5,6 +5,8 @@ import MiniButtonRow from "../../../ui/mini-buttons";
 export const InfiniteMovingButtons = ({
   buttonLabels,
   onSubmit,
+  downloadComplete,
+  setDownloadComplete,
   direction = "left",
   speed = "slow",
   pauseOnHover = true,
@@ -12,6 +14,8 @@ export const InfiniteMovingButtons = ({
 }: {
   buttonLabels: string[];
   onSubmit: (e: string) => void;
+  downloadComplete: boolean;
+  setDownloadComplete: (e: boolean) => void;
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
   pauseOnHover?: boolean;
@@ -110,7 +114,12 @@ export const InfiniteMovingButtons = ({
           pauseOnHover && "hover:[animation-play-state:paused]"
         )}
       >
-        <MiniButtonRow onSubmit={onSubmit} miniButtonLabels={buttonLabels} />
+        <MiniButtonRow
+          onSubmit={onSubmit}
+          miniButtonLabels={buttonLabels}
+          setDownloadComplete={setDownloadComplete}
+          downloadComplete={downloadComplete}
+        />
       </ul>
     </div>
   );
